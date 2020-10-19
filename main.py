@@ -25,8 +25,8 @@ while True:
         print(e)
         break
     else:
-        response += str(recv)
+        response += recv.decode()
 
-print(str(response))
+print(response)
 
 s.close()
