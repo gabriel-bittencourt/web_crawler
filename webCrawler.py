@@ -12,12 +12,17 @@ class WebCrawler:
 
     def __init__(self, url, port=80):
         self.url = url
-        self.req = Request(url, port)
+        self.port = port
+        self.req = Request('HEAD', url, port)
 
     def getContent(self):
 
-        response = self.req.get()
+        response = self.req.make_req()
+        parser = Parser(response)
+        length = int(parser.getHeader()['Content-Length'])
 
+        self.req = Request('GET', self.url, self.port)
+        response = self.req.make_req(length)
         parser = Parser(response)
         html = parser.getHTML()
 
@@ -28,5 +33,6 @@ class WebCrawler:
         for img in imgs:
             # Faz requisição
             # Salva o arquivo
+            img = img
             pass
 
