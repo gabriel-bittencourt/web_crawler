@@ -4,7 +4,10 @@ from parser import Parser
 _DIR = "response"
 
 def writeFile(fileName, fileType, content):
-    f = open("{}/{}.{}".format(_DIR, fileName, fileType), "w")
+
+    mode = ('wb' if fileType == 'jpg' else 'w')
+
+    f = open("{}/{}.{}".format(_DIR, fileName, fileType), mode)
     f.write(content)
     f.close()
 
@@ -17,7 +20,7 @@ class WebCrawler:
 
     def getContent(self):
 
-        response = self.req.get()
+        response = self.req.getHTML()
         parser = Parser(response)
         html = parser.getHTML()
 

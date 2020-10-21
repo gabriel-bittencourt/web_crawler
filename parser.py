@@ -3,10 +3,10 @@ from bs4 import BeautifulSoup
 
 class Parser(BeautifulSoup):
 
-    __header = None
-
     def __init__(self, content):
         super().__init__(content, 'html.parser')
+        self.__rawContent = content
+        self.__header = None
 
     # Retorna uma string com apenas o conteúdo HTML
     def getHTML(self):
@@ -26,12 +26,11 @@ class Parser(BeautifulSoup):
     def getHeader(self):
         if self.__header == None:
             self._createHeader()
-
         return self.__header
 
     def _createHeader(self):
         header_dict = {}
-        header_str = str(self).split('<!DOCTYPE HTML>')[0]
+        header_str = self.__rawContent.split('<!DOCTYPE HTML>')[0]
         header_lines = header_str.split('\r\n')
 
         # Código de status
@@ -44,3 +43,6 @@ class Parser(BeautifulSoup):
                 header_dict[key] = val
 
         self.__header = header_dict
+
+    def getImgData(self):
+        return self.__rawContent.split(b'\r\n\r\n')[-1]

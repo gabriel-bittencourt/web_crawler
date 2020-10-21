@@ -21,7 +21,7 @@ class Request:
         self.s.close()
 
     # Faz a requisição
-    def get(self):
+    def __get(self):
 
         self.startSocket()
         
@@ -29,7 +29,7 @@ class Request:
 
         self.s.send(request.encode())
 
-        response = ""
+        response = self.s.recv(2048)
         while True:
             try:
                 recv = self.s.recv(2048)
@@ -37,9 +37,15 @@ class Request:
                 # print(e)
                 break
             else:
-                response += recv.decode()
+                response += recv
         
         self.endSocket()
 
         return response
+
+    def getHTML(self):
+        return self.__get().decode()
+
+    def getImg(self):
+        return self.__get()
 
