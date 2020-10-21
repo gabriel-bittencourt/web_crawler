@@ -4,9 +4,8 @@ _TIMEOUT = 2
 
 class Request:
 
-    def __init__(self, method, url, port):
+    def __init__(self, url, port):
         url = url.split("/", 1)
-        self.metd = method
         self.host = url[0]
         self.path = "" if len(url)<=1 else url[1]
         self.port = port
@@ -22,18 +21,23 @@ class Request:
         self.s.close()
 
     # Faz a requisição
-    def make_req(self, buff_size=1024):
+    def get(self):
 
         self.startSocket()
         
-        request = "{} /{} HTTP/1.1\r\nHost: {}\r\n\r\n".format(self.metd, self.path, self.host)
+        request = "GET /{} HTTP/1.1\r\nHost: {}\r\n\r\n".format(self.path, self.host)
 
         self.s.send(request.encode())
 
-        response = self.s.recv(buff_size)
-        response = response.decode()
-
-        print(len(response))
+        response = ""
+        while True:
+            try:
+                recv = self.s.recv(2048)
+            except socket.error as e:
+                # print(e)
+                break
+            else:
+                response += recv.decode()
         
         self.endSocket()
 

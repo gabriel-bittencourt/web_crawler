@@ -13,16 +13,11 @@ class WebCrawler:
     def __init__(self, url, port=80):
         self.url = url
         self.port = port
-        self.req = Request('HEAD', url, port)
+        self.req = Request(url, port)
 
     def getContent(self):
 
-        response = self.req.make_req()
-        parser = Parser(response)
-        length = int(parser.getHeader()['Content-Length'])
-
-        self.req = Request('GET', self.url, self.port)
-        response = self.req.make_req(length)
+        response = self.req.get()
         parser = Parser(response)
         html = parser.getHTML()
 

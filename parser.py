@@ -3,14 +3,14 @@ from bs4 import BeautifulSoup
 
 class Parser(BeautifulSoup):
 
-    __header__ = None
+    __header = None
 
     def __init__(self, content):
         super().__init__(content, 'html.parser')
 
     # Retorna uma string com apenas o conteúdo HTML
     def getHTML(self):
-        return str(self.html)
+        return str(self.html.prettify())
 
     # Retorna um vetor com as imagens
     def getImages(self):
@@ -24,21 +24,23 @@ class Parser(BeautifulSoup):
 
     # Retorna a header em forma de dicionário
     def getHeader(self):
-        if self.__header__ == None:
+        if self.__header == None:
+            self._createHeader()
 
-            header_dict = {}
-            header_str = str(self).split('<!DOCTYPE HTML>')[0]
-            lines = header_str.split('\r\n')
+        return self.__header
 
-            # Código de status
-            header_dict['Status'] = int(lines[0].split()[1])
+    def _createHeader(self):
+        header_dict = {}
+        header_str = str(self).split('<!DOCTYPE HTML>')[0]
+        header_lines = header_str.split('\r\n')
 
-            # Outras infos
-            for line in lines[1:]:
-                if line:
-                    key, val = line.split(': ')
-                    header_dict[key] = val
+        # Código de status
+        header_dict['Status'] = int(header_lines[0].split()[1])
 
-            self.__header__ = header_dict
+        # Outras infos
+        for line in header_lines[1:]:
+            if line:
+                key, val = line.split(': ')
+                header_dict[key] = val
 
-        return self.__header__
+        self.__header = header_dict
