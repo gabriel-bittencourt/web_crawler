@@ -32,7 +32,7 @@ class WebCrawler:
         img_name, img_type = img.split("/")[-1].split(".")
 
         req = Request(img, self.port)
-        response = req.getImg()
+        response = req.get()
         
         parser = Parser(response)
         data = parser.getImgData()
@@ -43,7 +43,7 @@ class WebCrawler:
 
     def getContent(self):
 
-        response = self.req.getHTML()
+        response = self.req.get()
         parser = Parser(response)
         html = parser.getHTML()
 

@@ -21,7 +21,7 @@ class Request:
         self.s.close()
 
     # Faz a requisição
-    def __get(self):
+    def get(self):
 
         self.startSocket()
         
@@ -42,10 +42,4 @@ class Request:
         self.endSocket()
 
         return response
-
-    def getHTML(self):
-        return self.__get().decode()
-
-    def getImg(self):
-        return self.__get()
 
