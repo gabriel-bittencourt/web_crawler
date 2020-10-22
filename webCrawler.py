@@ -1,3 +1,5 @@
+from urllib.parse import urlparse, urljoin
+
 from request import Request
 from parser import Parser
 
@@ -5,7 +7,7 @@ _DIR = "response"
 
 def writeFile(fileName, fileType, content):
 
-    mode = ('wb' if fileType == 'jpg' or fileType == "png" else 'w')
+    mode = ('w' if fileType == 'html' else 'wb')
 
     f = open("{}/{}.{}".format(_DIR, fileName, fileType), mode)
     f.write(content)
@@ -14,21 +16,26 @@ def writeFile(fileName, fileType, content):
 class WebCrawler:
 
     def __init__(self, url, port=80):
-        self.url = url
+        self.url = urlparse(url)
         self.port = port
-        self.req = Request(url, port)
+        self.req = Request(self.url.netloc
+                            + self.url.path, port)
+
+
+    def handleImgSrc(self, imgSrc):
+        url = urljoin(self.url.geturl(), imgSrc) # Trata caminhos absolutos e relativos
+        parsedUrl = urlparse(url)
+        httpPath = parsedUrl.netloc + parsedUrl.path
+
+        return httpPath
 
 
     def getImg(self, img):
 
-        # Verificar se img é url absoluto ou relativo
-        #
-        #
+        
+        img = self.handleImgSrc(img)
 
-        # Ex de imagem qualquer com url absoluto
-        img = "purr.objects-us-east-1.dream.io/i/beerandcat.jpg" # Remover
-
-        # Seleciona o nome e o tipo do arquivo
+        # # Seleciona o nome e o tipo do arquivo
         img_name, img_type = img.split("/")[-1].split(".")
 
         req = Request(img, self.port)

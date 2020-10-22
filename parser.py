@@ -30,8 +30,8 @@ class Parser(BeautifulSoup):
 
     def _createHeader(self):
         header_dict = {}
-        header_str = self.__rawContent.split('<!DOCTYPE HTML>')[0]
-        header_lines = header_str.split('\r\n')
+        header_str = self.__rawContent.split(b'\r\n\r\n')[0]
+        header_lines = header_str.split(b'\r\n')
 
         # Código de status
         header_dict['Status'] = int(header_lines[0].split()[1])
@@ -39,7 +39,10 @@ class Parser(BeautifulSoup):
         # Outras infos
         for line in header_lines[1:]:
             if line:
-                key, val = line.split(': ')
+                key, val = line.split(b': ')
+                key = key.decode()
+                key = val.decode()
+
                 header_dict[key] = val
 
         self.__header = header_dict
