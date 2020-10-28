@@ -47,5 +47,9 @@ class Parser(BeautifulSoup):
 
         self.__header = header_dict
 
-    def getImgData(self):
-        return self.__rawContent.split(b'\r\n\r\n')[-1]
+    # def getImgData(self):
+    #     return self.__rawContent.split(b'\r\n\r\n')[-1]
+
+    @staticmethod
+    def getImgData(data):
+        return data.split(b'\r\n\r\n')[-1]

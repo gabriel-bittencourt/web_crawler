@@ -12,9 +12,21 @@ class Request:
 
     # Cria o socket
     def startSocket(self):
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.s.connect((self.host, self.port))
-        self.s.settimeout(_TIMEOUT)
+
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        except socket.error as err:
+            print("Erro ao criar socket: {}\n".format(err))
+            raise
+        else:
+            try:
+                s.connect((self.host, self.port))
+            except socket.gaierror as err:
+                print("Erro ao se conectar a \"{}\"".format(self.host))
+                raise
+            else:
+                s.settimeout(_TIMEOUT)
+                return s
 
     # Encerra o socket
     def endSocket(self):
@@ -23,7 +35,10 @@ class Request:
     # Faz a requisição
     def get(self):
 
-        self.startSocket()
+        try:
+            self.s = self.startSocket()
+        except:
+            raise
         
         request = "GET /{} HTTP/1.1\r\nHost: {}\r\n\r\n".format(self.path, self.host)
 
@@ -33,8 +48,7 @@ class Request:
         while True:
             try:
                 recv = self.s.recv(2048)
-            except socket.error as e:
-                # print(e)
+            except socket.timeout as e:
                 break
             else:
                 response += recv
@@ -42,4 +56,3 @@ class Request:
         self.endSocket()
 
         return response
-

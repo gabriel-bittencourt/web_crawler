@@ -13,6 +13,7 @@ def writeFile(fileName, fileType, content):
     f.write(content)
     f.close()
 
+
 class WebCrawler:
 
     def __init__(self, url, port=80):
@@ -39,10 +40,14 @@ class WebCrawler:
         img_name, img_type = img.split("/")[-1].split(".")
 
         req = Request(img, self.port)
-        response = req.get()
+
+        try:
+            response = req.get()
+        except:
+            return
         
-        parser = Parser(response)
-        data = parser.getImgData()
+        response = req.get()
+        data = Parser.getImgData(response)
 
         # Salva o arquivo
         writeFile(img_name, img_type, data)
@@ -50,7 +55,11 @@ class WebCrawler:
 
     def getContent(self):
 
-        response = self.req.get()
+        try:
+            response = self.req.get()
+        except:
+            return
+
         parser = Parser(response)
         html = parser.getHTML()
 
