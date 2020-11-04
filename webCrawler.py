@@ -37,7 +37,9 @@ class WebCrawler:
         img = self.handleImgSrc(img)
 
         # # Seleciona o nome e o tipo do arquivo
-        img_name, img_type = img.split("/")[-1].split(".")
+        img_name = img.split("/")[-1]
+        img_type = img_name.split(".")[-1]
+        img_name = img_name[:-len(img_type)-1]
 
         req = Request(img, self.port)
 
