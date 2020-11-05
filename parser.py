@@ -4,12 +4,17 @@ from bs4 import BeautifulSoup
 class Parser(BeautifulSoup):
 
     def __init__(self, content):
-        super().__init__(content, 'html.parser')
         self.__rawContent = content
         self.__header = None
 
     # Retorna uma string com apenas o conteúdo HTML
     def getHTML(self):
+        p = self.__rawContent.find(b'\r\n\r\n')
+        if p >= 0:
+            html = self.__rawContent[p+8:]
+        else: 
+            html = self.__rawContent
+        super().__init__(html, 'html5lib')
         return str(self.html.prettify())
 
     # Retorna um vetor com as imagens

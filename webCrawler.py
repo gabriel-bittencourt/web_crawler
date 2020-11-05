@@ -5,6 +5,8 @@ from parser import Parser
 
 _DIR = "response"
 
+
+
 def writeFile(fileName, fileType, content):
 
     mode = ('w' if fileType == 'html' else 'wb')
@@ -37,9 +39,9 @@ class WebCrawler:
         img = self.handleImgSrc(img)
 
         # # Seleciona o nome e o tipo do arquivo
-        img_name = img.split("/")[-1]
-        img_type = img_name.split(".")[-1]
-        img_name = img_name[:-len(img_type)-1]
+        img_file = img.split("/")[-1]
+        img_type = img_file.split(".")[-1]
+        img_name = img_file[:-len(img_type)-1]
 
         req = Request(img, self.port)
 
@@ -50,9 +52,14 @@ class WebCrawler:
         
         response = req.get()
         data = Parser.getImgData(response)
-
-        # Salva o arquivo
-        writeFile(img_name, img_type, data)
+        
+        parser = Parser(response)
+        header = parser.getHeader()
+        if header['Status'] == 200:
+            # Salva o arquivo
+            writeFile(img_name, img_type, data)
+        else:
+            print(f'Requisição de {img_file} retornou status {header["Status"]}. Ignorando imagem...')
 
 
     def getContent(self):
@@ -63,11 +70,16 @@ class WebCrawler:
             return
 
         parser = Parser(response)
-        html = parser.getHTML()
+        header = parser.getHeader()
 
-        # Salva o arquivo html
-        writeFile("index", "html", html)
+        if header["Status"] == 200:
 
-        imgs = parser.getImages()
-        for img in imgs:
-            self.getImg(img)
+            # Salva o arquivo html
+            html = parser.getHTML()
+            writeFile("index", "html", html)
+
+            imgs = parser.getImages()
+            for img in imgs:
+                self.getImg(img)
+        else:
+            print(f'Requisição HTML retornou status {header["Status"]}. Terminando...')
