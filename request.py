@@ -12,7 +12,7 @@ class Request:
 
     # Cria o socket
     def startSocket(self):
-
+        
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         except socket.error as err:
@@ -52,6 +52,8 @@ class Request:
                 break
             else:
                 response += recv
+                if not recv:
+                    break
         
         self.endSocket()
 

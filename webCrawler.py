@@ -19,16 +19,18 @@ def writeFile(fileName, fileType, content):
 class WebCrawler:
 
     def __init__(self, url, port=80):
+        if "http" not in url[:5]:
+            url = "http://" + url
         self.url = urlparse(url)
         self.port = port
-        self.req = Request(self.url.netloc
+        self.req = Request(self.url.hostname
                             + self.url.path, port)
 
 
     def handleImgSrc(self, imgSrc):
         url = urljoin(self.url.geturl(), imgSrc) # Trata caminhos absolutos e relativos
         parsedUrl = urlparse(url)
-        httpPath = parsedUrl.netloc + parsedUrl.path
+        httpPath = parsedUrl.hostname + parsedUrl.path
 
         return httpPath
 
@@ -59,7 +61,7 @@ class WebCrawler:
             # Salva o arquivo
             writeFile(img_name, img_type, data)
         else:
-            print(f'Requisição de {img_file} retornou status {header["Status"]}. Ignorando imagem...')
+            print(f'Requisição de "{img}" retornou status {header["Status"]}. Ignorando imagem...')
 
 
     def getContent(self):

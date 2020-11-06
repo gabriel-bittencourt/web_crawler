@@ -39,7 +39,11 @@ class Parser(BeautifulSoup):
         header_lines = header_str.split(b'\r\n')
 
         # Código de status
-        header_dict['Status'] = int(header_lines[0].split()[1])
+        try:
+            header_dict['Status'] = int(header_lines[0].split()[1])
+        except ValueError:
+            header_dict['Status'] = 'NaN'
+            print("Impossivel ler o código de status.")
 
         # Outras infos
         for line in header_lines[1:]:
@@ -51,9 +55,6 @@ class Parser(BeautifulSoup):
                 header_dict[key] = val
 
         self.__header = header_dict
-
-    # def getImgData(self):
-    #     return self.__rawContent.split(b'\r\n\r\n')[-1]
 
     @staticmethod
     def getImgData(data):
